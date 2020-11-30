@@ -31,8 +31,11 @@ Program arguments
 Main Classes :
 * Main  - Triggers Spark batch job to run data pipeline process to ingest chat logs and give out emails
 ```shell script
-./bin/spark-submit --class "com.analytics.entry.ActionCountByHotel" \
-  --master local[*] /jar-path/nlp-chat-analyzer-1.0.jar config.properties
+~/spark/spark-3.0.0-bin-hadoop3.2/bin/spark-submit \
+--class "com.ds.practise.nlp.entry.Main" \
+--master local[*] \
+/<full-path>/nlp-chat-analyzer-1.0.jar \
+/<full-path>/default-config.properties
 ```
 
 Note : Please edit and use `default-config.properties` as a template config.properties file for input.
