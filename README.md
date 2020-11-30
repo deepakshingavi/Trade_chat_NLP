@@ -5,6 +5,7 @@ Identify chats with trade related topics out of random chats meesage
 * Java 8+
 * Scala 2.12+
 * Spark 3.0.0
+ https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz
 * Maven 3.5.0
 
 #### Project Details
