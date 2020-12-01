@@ -38,8 +38,8 @@ Main Classes :
 ~/spark/spark-3.0.0-bin-hadoop3.2/bin/spark-submit \
 --class "com.ds.practise.nlp.entry.Main" \
 --master local[*] \
-/<full-path>/nlp-chat-analyzer-1.0.jar \
-/<full-path>/default-config.properties
+/Users/dshingav/openSourceCode/nlp-chat-analyzer/target/nlp-chat-analyzer-1.0.jar \
+/Users/dshingav/openSourceCode/nlp-chat-analyzer/src/main/resources/default-config.properties
 ```
 
 Note : Please edit and use `default-config.properties` as a template config.properties file for input.
@@ -61,4 +61,7 @@ This class can be extended to change as per input dataset formats.
 e.g. If there are two trading chats for the same with no. of words `selftext` as 51 and 500 then the chat which has no .of words as 500 will 
 be selected in the result.
 5. Token Stemming is not required here as it has known issues like it stems `trading` to `trad`.
-6. The scope of the project is limited to support only JSON data format . 
+6. The scope of the project is limited to support only JSON data format.
+
+* Input File  - src/main/resources/sampleData/test.json
+* Output File - src/main/resources/sampleDataOutput/outputDump.eml  

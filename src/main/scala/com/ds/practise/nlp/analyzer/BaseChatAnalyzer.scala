@@ -2,7 +2,6 @@ package com.ds.practise.nlp.analyzer
 
 import com.ds.practise.nlp.common.{AppProperties, Constant}
 import com.ds.practise.nlp.model.Email
-import javax.mail.Message
 import javax.mail.internet.MimeMessage
 import org.apache.spark.ml.feature.{CountVectorizer, RegexTokenizer, StopWordsRemover}
 import org.apache.spark.ml.linalg.SparseVector
@@ -89,7 +88,7 @@ abstract class BaseChatAnalyzer(props: AppProperties) {
   def getLargeContentForEachAuthor(df : DataFrame): DataFrame = {
     val byNoOfWords = Window.partitionBy(col("from") ).orderBy(col("no_of_words"))
     df.withColumn("rank", rank over byNoOfWords)
-      .filter(col("rank") > 1)
+      .filter(col("rank") === 1)
       .orderBy(col("no_of_words").desc)
       .limit(1000)
   }

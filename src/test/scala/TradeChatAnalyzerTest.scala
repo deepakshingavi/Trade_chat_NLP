@@ -78,7 +78,6 @@ class TradeChatAnalyzerTest extends AnyFunSuite
 
   test("get records with most no. of words with unique receivers") {
     import testImplicits._
-    val r = new scala.util.Random(31)
     val inputDf = List(
       ("ABC@g.com", 76),
       ("XYZ@g.com", 50),

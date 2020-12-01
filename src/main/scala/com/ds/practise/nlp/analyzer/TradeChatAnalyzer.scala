@@ -61,7 +61,7 @@ class TradeChatAnalyzer(props: AppProperties) extends BaseChatAnalyzer(props: Ap
     msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to))
     msg.setSubject(email.subject)
     val body = new MimeBodyPart()
-    body.setText(email.selftext)
+    body.setText(Constant.formatted(email.selftext,props))
     msg.setContent(new MimeMultipart(body))
     msg.saveChanges()
     msg

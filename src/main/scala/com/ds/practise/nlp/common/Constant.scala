@@ -1,5 +1,7 @@
 package com.ds.practise.nlp.common
 
+import org.apache.commons.text.WordUtils
+
 /**
  * List of all constant value
  */
@@ -28,5 +30,14 @@ object Constant {
   val MIME_VERSION = "MIME-Version"
   val CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding"
   val CONTENT_TYPE = "Content-Type"
+
+  /**
+   * This method does the text wrapping
+   * @param text - Unformatted text
+   * @return
+   */
+  def formatted(text: String,props: AppProperties): String = {
+    WordUtils.wrap(text,props.get(Constant.EMAIL_MAX_LINE_LENGTH).toInt,"\n\r",false)
+  }
 
 }
