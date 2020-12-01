@@ -7,6 +7,9 @@ Identify chats with trade related topics out of random chats meesage
 * Spark 3.0.0
  https://archive.apache.org/dist/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz
 * Maven 3.5.0
+* Copy Java mail api jars to Spark jars folder `~/spark/spark-3.0.0-bin-hadoop3.2/jars/`
+1. https://repo1.maven.org/maven2/javax/mail/javax.mail-api/1.6.2/javax.mail-api-1.6.2.jar
+2. https://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar
 
 #### Project Details
 * src/main/scala - Contains Scala source code
@@ -57,4 +60,5 @@ This class can be extended to change as per input dataset formats.
 4. A valid trading chat with most no. of words in `selftext` by an author should be selected to email.
 e.g. If there are two trading chats for the same with no. of words `selftext` as 51 and 500 then the chat which has no .of words as 500 will 
 be selected in the result.
-5. Token Stemming is not required here as it has known issues like it stems `trading` to `trad`.    
+5. Token Stemming is not required here as it has known issues like it stems `trading` to `trad`.
+6. The scope of the project is limited to support only JSON data format . 

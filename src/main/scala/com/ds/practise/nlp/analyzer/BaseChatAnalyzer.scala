@@ -2,7 +2,8 @@ package com.ds.practise.nlp.analyzer
 
 import com.ds.practise.nlp.common.{AppProperties, Constant}
 import com.ds.practise.nlp.model.Email
-import org.apache.commons.text.WordUtils
+import javax.mail.Message
+import javax.mail.internet.MimeMessage
 import org.apache.spark.ml.feature.{CountVectorizer, RegexTokenizer, StopWordsRemover}
 import org.apache.spark.ml.linalg.SparseVector
 import org.apache.spark.mllib.clustering.{LDA, OnlineLDAOptimizer}
@@ -38,7 +39,7 @@ abstract class BaseChatAnalyzer(props: AppProperties) {
    * Logic to publish email
    * @param emails - List of email object
    */
-  def publishEmail(emails: Array[Email]): Unit
+  def publishEmail(emails: Array[Email]): Array[MimeMessage]
 
   /**
    * This method holds Data Pipeline flow
@@ -134,16 +135,6 @@ abstract class BaseChatAnalyzer(props: AppProperties) {
     val t1 = System.nanoTime()
     println("Elapsed time: " + (t1 - t0) + "ns")
     (t1 - t0)
-  }
-
-  /**
-   * This method does the text wrapping
-   * @param text - Unformatted text
-   * @return
-   */
-  def formatted(text: String): String = {
-    props.get(Constant.EMAIL_MAX_LINE_LENGTH).toInt
-    WordUtils.wrap(text,100,"\n\r",false)
   }
 
   /**

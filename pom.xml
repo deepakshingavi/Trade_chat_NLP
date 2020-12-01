@@ -19,6 +19,7 @@
         <kafka.client.version>2.4.0</kafka.client.version>
         <prometheus.version>0.6.0</prometheus.version>
         <scala.version>2.12</scala.version>
+        <javax.mail.version>1.6.2</javax.mail.version>
     </properties>
 
     <build>
@@ -125,6 +126,18 @@
             <artifactId>spark-mllib_${scala.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.version}</artifactId>

@@ -1,9 +1,12 @@
 package com.ds.practise.nlp.analyzer
 
-import java.io.{File, PrintWriter}
+import java.io.{BufferedOutputStream, File, FileOutputStream}
+import java.util.Date
 
 import com.ds.practise.nlp.common.{AppProperties, Constant}
-import com.ds.practise.nlp.model.Email
+import com.ds.practise.nlp.model.{CustomMimeMessage, Email}
+import javax.mail.internet.{InternetAddress, MimeBodyPart, MimeMessage, MimeMultipart}
+import javax.mail.{Message, MessagingException, Session}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
@@ -18,41 +21,50 @@ class TradeChatAnalyzer(props: AppProperties) extends BaseChatAnalyzer(props: Ap
   val logger: Logger = LoggerFactory.getLogger(classOf[TradeChatAnalyzer])
 
   /**
-   * This where the code to push email should go for now pushing data to a simple text file.
+   * Mime email object are dumped to eml file
    * @param emails - List of email object
    */
-  override def publishEmail(emails: Array[Email]): Unit = {
-    val writer = new PrintWriter(new File(s"${props.get(Constant.OUTPUT_PATH)}/emails.txt"))
-    emails.foreach(email => {
-      val sb: String = formatEmail(email)
-      writer.write(sb)
+  override def publishEmail(emails: Array[Email]): Array[MimeMessage] = {
+    val fos = new FileOutputStream(new File(s"${props.get(Constant.OUTPUT_PATH)}/outputDump.eml"))
+    val bos = new BufferedOutputStream(fos)
+    val mimeVersion = props.get(Constant.DEFAULT_MIME_VERSION)
+    val contentType = props.get(Constant.DEFAULT_CONTENT_TYPE)
+    val contentTransferEncoding = props.get(Constant.DEFAULT_CONTENT_TRANSFER_ENCODING)
+    val defaultToUser = props.get(Constant.DEFAULT_TO_USER)
+
+    val mimeMsgs : Array[MimeMessage] = emails.map(email => {
+      val msg = createMessage(email,defaultToUser,mimeVersion,contentType,contentTransferEncoding)
+      msg.writeTo(bos)
+      msg
     })
-    writer.close()
+    fos.close()
+    mimeMsgs
   }
 
   /**
-   * genrating formatted content out of Email object
+   * Creates Mime email message object
    * @param email - Email object
+   * @param to
+   * @param mimeVersion
+   * @param contentType
+   * @param contentTransferEncoding
+   * @throws
    * @return
    */
-  def formatEmail(email: Email): String = {
-    val sb = new StringBuffer()
-    sb
-      .append("Message-ID: ")
-      .append(email.messageId).append("\n\r")
-      .append("From: ")
-      .append(email.from).append("\n\r")
-      .append("To: user@behavox.com").append("\n\r")
-      .append("Subject: ")
-      .append(email.subject).append("\n\r")
-      .append("Date: ")
-      .append(email.date).append("\n\r")
-      .append("Mime-Version: 1.0").append("\n\r")
-      .append("Content-Transfer-Encoding: 7bit").append("\n\r")
-      .append("Content-Type: text/plain; charset=utf-8").append("\n\r")
-      .append(formatted(email.selftext)).append("\n\r")
-      .append("--------------------------------------").append("\n\r")
-    sb.toString
+  @throws[MessagingException]
+  def createMessage(email: Email, to: String, mimeVersion:String,contentType:String,contentTransferEncoding:String): MimeMessage = {
+    val session : Session = null
+    val msg = new CustomMimeMessage(session,email.messageId,mimeVersion,contentType,contentTransferEncoding)
+
+    msg.setSentDate(new Date(email.created_utc*1000))
+    msg.setFrom(new InternetAddress(email.from))
+    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to))
+    msg.setSubject(email.subject)
+    val body = new MimeBodyPart()
+    body.setText(email.selftext)
+    msg.setContent(new MimeMultipart(body))
+    msg.saveChanges()
+    msg
   }
 
   /**
@@ -65,7 +77,7 @@ class TradeChatAnalyzer(props: AppProperties) extends BaseChatAnalyzer(props: Ap
     df.withColumn("messageId", concat(col("created_utc"), lit("@"), col("domain")))
       .withColumn("from", concat(col("author"), lit("@"), col("domain")))
       .withColumnRenamed("title", "subject")
-      .withColumn("date", date_format(from_unixtime(col("created_utc")), "EEE, d MMM yyyy HH:mm:ss xxxxx"))
+//      .withColumn("date", date_format(from_unixtime(col("created_utc")), "EEE, d MMM yyyy HH:mm:ss xxxxx"))
       .select(outputColumns: _*)
   }
 

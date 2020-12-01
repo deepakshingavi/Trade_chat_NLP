@@ -2,6 +2,7 @@
 import com.ds.practise.nlp.common.AppProperties
 import com.ds.practise.nlp.analyzer.TradeChatAnalyzer
 import com.ds.practise.nlp.model.Email
+import javax.mail.internet.MimeMessage
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SQLContext, SQLImplicits, SparkSession}
 import org.scalatest.BeforeAndAfter
@@ -111,12 +112,20 @@ class TradeChatAnalyzerTest extends AnyFunSuite
     assertResult(3)(df.count())
   }
 
-  test("end to end test to email") {
+  test("end to end test") {
     val emails = analyzer.processTradeChats(spark)
-    val emailsWithoutBOdy = emails.map(email => Email(email.messageId, email.from, email.subject, email.date, ""))
+    val emailsWithoutBody = emails.map(email => Email(email.messageId, email.from, email.subject, email.created_utc, ""))
+    val email  = Email("1572706734@self.wallstreetbets", "bigbear0083@self.wallstreetbets",
+      "Wall Street Week Ahead for the trading week beginning November 4th, 2019", 1572706734, "")
     val expected = Array(
-      Email("1572706734@self.wallstreetbets", "bigbear0083@self.wallstreetbets", "Wall Street Week Ahead for the trading week beginning November 4th, 2019", "Sat, 2 Nov 2019 20:28:54 +05:30", ""))
-    assertResult(expected)(emailsWithoutBOdy)
+      email)
+    assertResult(expected)(emailsWithoutBody)
+
+    val mimeMsg : MimeMessage = analyzer.publishEmail(emailsWithoutBody)(0)
+    assertResult(email.messageId)(mimeMsg.getMessageID)
+    assertResult("charset=utf-8")(mimeMsg.getContentType)
+    assertResult("Wall Street Week Ahead for the trading week beginning November 4th, 2019")(mimeMsg.getSubject)
+
   }
 
   test("all stop words should be removed") {
@@ -157,16 +166,7 @@ class TradeChatAnalyzerTest extends AnyFunSuite
     assertResult(expected)(formattedResult)
   }
 
-  test("email formatting"){
 
-    val email = Email("messageId", "email@from.com", "subject line", "Wed, 27 May 2020 12:52:08 +00:00", "I understand that most of this sub has the critical reading skills of a 6 year old and the attention big sigma moves happen all the time in of buying aapl or msft for hours, i knew i could immediately buy them both with tqqq and be rewarded": String)
-
-    val formattedEmailText = analyzer.formatEmail(email)
-
-    val expectedText = "Message-ID: messageId\n\rFrom: email@from.com\n\rTo: user@behavox.com\n\rSubject: subject line\n\rDate: Wed, 27 May 2020 12:52:08 +00:00\n\rMime-Version: 1.0\n\rContent-Transfer-Encoding: 7bit\n\rContent-Type: text/plain; charset=utf-8\n\rI understand that most of this sub has the critical reading skills of a 6 year old and the attention\n\rbig sigma moves happen all the time in of buying aapl or msft for hours, i knew i could immediately\n\rbuy them both with tqqq and be rewarded\n\r--------------------------------------\n\r"
-
-    assertResult(expectedText)(formattedEmailText)
-  }
 
 
 }

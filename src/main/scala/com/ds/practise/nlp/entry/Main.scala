@@ -28,7 +28,7 @@ object Main {
         val spark : SparkSession = SparkSession.builder().getOrCreate()
         val chatAnalyzer = new TradeChatAnalyzer(props)
         val emails : Array[Email] = chatAnalyzer.processTradeChats(spark)
-        val emailSent = chatAnalyzer.publishEmail(emails)
+        chatAnalyzer.publishEmail(emails)
       }
     }
   }

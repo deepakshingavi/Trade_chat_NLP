@@ -20,4 +20,13 @@ object Constant {
 
   val EMAIL_MAX_LINE_LENGTH = "email.max.line.length"
 
+  val DEFAULT_MIME_VERSION = "default.mime.version"
+  val DEFAULT_CONTENT_TYPE = "default.content.type"
+  val DEFAULT_CONTENT_TRANSFER_ENCODING = "default.content.transfer.encoding"
+  val DEFAULT_TO_USER= "default.to.user"
+  val MESSAGE_ID = "Message-ID"
+  val MIME_VERSION = "MIME-Version"
+  val CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding"
+  val CONTENT_TYPE = "Content-Type"
+
 }
